@@ -1,0 +1,11 @@
+<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Smart Local Tour Guide logo">
+  <defs>
+    <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="14" fill="url(#logoGrad)"/>
+  <path d="M24 11 C30 11 35 16 35 22 C35 30 24 38 24 38 C24 38 13 30 13 22 C13 16 18 11 24 11 Z" fill="#FFFFFF"/>
+  <circle cx="24" cy="22" r="5.5" fill="#2563EB"/>
+</svg>
