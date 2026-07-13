@@ -25,4 +25,4 @@ def home():
 
 @app.get("/navigation")
 def navigation(source: str, destination: str):
-    return get_route(source, destination)
+    return get_route(source, destination)

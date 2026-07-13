@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY") or "AIzaSyD5IlFfYT9GKMpiacvbeCMqp021aNCjjPw"
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 
 def decode_polyline(polyline_str):
@@ -16,7 +16,7 @@ def decode_polyline(polyline_str):
     """
     index, lat, lng = 0, 0, 0
     coordinates = []
-    
+
     while index < len(polyline_str):
         # Decode Latitude
         shift, result = 0, 0
@@ -29,7 +29,7 @@ def decode_polyline(polyline_str):
                 break
         lat_change = ~(result >> 1) if result & 1 else (result >> 1)
         lat += lat_change
-        
+
         # Decode Longitude
         shift, result = 0, 0
         while True:
@@ -41,9 +41,9 @@ def decode_polyline(polyline_str):
                 break
         lng_change = ~(result >> 1) if result & 1 else (result >> 1)
         lng += lng_change
-        
+
         coordinates.append([lng / 100000.0, lat / 100000.0])
-        
+
     return coordinates
 
 
@@ -56,17 +56,17 @@ def get_simulated_route(source_coord, destination_coord):
     """
     lon1, lat1 = source_coord
     lon2, lat2 = destination_coord
-    
+
     # Haversine distance formula approximation
     dlat = lat2 - lat1
     dlon = lon2 - lon1
     distance_km = round(math.sqrt((dlat * 111)**2 + (dlon * 111 * math.cos(math.radians(lat1)))**2), 2)
-    
+
     # Assume 40 km/h average speed in city
     duration_minutes = round((distance_km / 40.0) * 60.0, 1)
     if duration_minutes < 1:
         duration_minutes = 1.0
-        
+
     # Interpolate 10 points with sine/cosine wiggles to mimic real street navigation
     route = [source_coord]
     steps = 10
@@ -74,16 +74,16 @@ def get_simulated_route(source_coord, destination_coord):
         t = i / steps
         curr_lon = lon1 + t * dlon
         curr_lat = lat1 + t * dlat
-        
+
         # Add subtle curved wiggles to look like actual roads instead of a straight line
         wiggle_factor = 0.0006 * math.sin(t * math.pi * 3)
         curr_lon += wiggle_factor * math.cos(math.radians(lat1))
         curr_lat += wiggle_factor * math.sin(math.radians(lat1))
-        
+
         route.append([curr_lon, curr_lat])
-        
+
     route.append(destination_coord)
-    
+
     return {
         "status": "success",
         "source": f"{lat1},{lon1}",
@@ -106,7 +106,7 @@ def get_osrm_route(source_coord, destination_coord):
     lon1, lat1 = source_coord
     lon2, lat2 = destination_coord
     url = f"https://router.project-osrm.org/route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=full&geometries=geojson"
-    
+
     try:
         response = requests.get(url, timeout=10)
         if response.status_code == 200:
@@ -116,7 +116,7 @@ def get_osrm_route(source_coord, destination_coord):
                 distance_km = round(route["distance"] / 1000.0, 2)
                 duration_minutes = round(route["duration"] / 60.0, 2)
                 route_coordinates = route["geometry"]["coordinates"] # list of [lon, lat]
-                
+
                 return {
                     "status": "success",
                     "source": f"{lat1},{lon1}",
@@ -193,7 +193,7 @@ def get_route(start_address, end_address):
 
     # Use modern Google Routes API
     url = "https://routes.googleapis.com/directions/v2:computeRoutes"
-    
+
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
@@ -223,7 +223,7 @@ def get_route(start_address, end_address):
 
     try:
         response = requests.post(url, headers=headers, json=body, timeout=15)
-        
+
         # If blocked or disabled, fall back to OSRM route
         if response.status_code != 200:
             print(f"Warning: Google Routes API returned status {response.status_code}. Falling back to OSRM route.")
