@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 // Get API Key from environment or fallback
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyD5IlFfYT9GKMpiacvbeCMqp021aNCjjPw';
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const loadGoogleMapsScript = (apiKey, callback) => {
   if (window.google && window.google.maps && window.google.maps.OverlayView) {
